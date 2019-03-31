@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from cg_util import calculate_image_measures
 
 class Window:
 
@@ -55,8 +56,7 @@ class Window:
 
     def put_mean_std(self, color):
         font = cv2.FONT_HERSHEY_SIMPLEX
-        w_std = np.std(self.values)
-        w_mean = np.mean(self.values)
+        w_mean,w_std,_ = calculate_image_measures(self.values)
         text = "W-Mean: {0:.2f} W-Std: {1:.2f}".format(w_mean, w_std) + " W-Shape: {0}".format(self.values.shape)
         cordinate = (self.x_center-(120),self.y_center+(self.length+32))
         cv2.putText(self.image,text,cordinate,font,0.5,color,1,cv2.LINE_AA)

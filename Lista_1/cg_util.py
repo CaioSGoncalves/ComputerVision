@@ -1,9 +1,9 @@
 import cv2
-import numpy as np
 from matplotlib import pyplot as plt
+import numpy as np
 
-def esc_pressed():
-    key = cv2.waitKey(20) & 0xFF
+def esc_pressed(key):
+    key = key & 0xFF
     return key == 27
 
 def plot_channels_hist(img, colors, max_value):
@@ -14,3 +14,10 @@ def plot_channels_hist(img, colors, max_value):
         plt.xlim([0,max_value])
     plt.legend(colors)
     plt.show()
+
+def calculate_image_measures(image):
+    mean = np.mean(image)
+    std = np.std(image)
+    variance = np.var(image)
+    return mean,std,variance
+    
