@@ -6,7 +6,7 @@ from cg_util import plot_channels_hist,esc_pressed
 
 red_color = (0,0,255)
 white_color = (255,255,255)
-window_half_len = 20
+window_len = 11
 default_img, img = None,None
 
 def exercise_1():
@@ -34,11 +34,11 @@ def exercise_3():
 def draw_window(event,x,y,flags,param):    
     if event == cv2.EVENT_MOUSEMOVE:        
         clean_image()
-        window = Window(img,x,y,window_half_len)
+        window = Window(img,x,y,window_len,window_len)
         if window.it_fits():
             window.draw_retangle(red_color)
             window.put_informations(white_color)
-            window.draw_new_frame()
+            window.show_window()
         cv2.imshow("Exercise 1.3", img)
 
 def clean_image():
