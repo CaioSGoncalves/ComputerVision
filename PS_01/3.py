@@ -16,8 +16,8 @@ def exercise_A():
     magnitude_1, phase_1 = freq_img_1.get_magnitude_phase()
     magnitude_2, phase_2 = freq_img_2.get_magnitude_phase()
 
-    freq_img_1.update_magnitude_phase(magnitude_1, phase_2)
-    freq_img_2.update_magnitude_phase(magnitude_2, phase_1)
+    freq_img_1.update_magnitude_phase(magnitude_1, phase_1)
+    freq_img_2.update_magnitude_phase(magnitude_2, phase_2)
 
     img_back_1 = freq_img_1.img_back
     img_back_2 = freq_img_2.img_back
@@ -58,19 +58,24 @@ def transform_images_magnitude_phase_mean(img):
     freq_img = Frequency_Image(img)
     magnitude, phase = freq_img.get_magnitude_phase()
 
+    const = 100
+    const2 = 1000
+
     magnitude[:] = np.mean(magnitude)
     freq_img.update_magnitude_phase(magnitude=magnitude)
     img_back = freq_img.img_back
-    cv2.imshow("Exercise - Magnitude = Mean", img_back)
+    freq_img.img_back_show('Exercise - Magnitude = Mean')
 
     freq_img.init_magnitude_phase()
 
     phase[:] = np.mean(phase)
     freq_img.update_magnitude_phase(phase=phase)
     img_back = freq_img.img_back
-    cv2.imshow("Exercise - Phase = Mean", img_back)
+    freq_img.img_back_show('Exercise - Phase = Mean')
+
+    plt.show()
+
     cv2.waitKey()
-    cv2.destroyAllWindows()
 
 def exercise_C():
     img = cv2.imread('images/foto.png',0)

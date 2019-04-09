@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from cg_util import calculate_image_measures
+from matplotlib import pyplot as plt
 
 class Frequency_Image:
 
@@ -46,6 +47,11 @@ class Frequency_Image:
         fourier_inv_shift = np.fft.ifftshift(fourier)
         img_back = cv2.idft(fourier_inv_shift)    
         new_plane = cv2.split(img_back)
-        self.img_back = cv2.magnitude(new_plane[0],new_plane[1])        
+        self.img_back = cv2.magnitude(new_plane[0],new_plane[1])
+
+    def img_back_show(self, title='Image Back'):
+        plt.figure(title)
+        plt.title(title)
+        plt.imshow(self.img_back, cmap = 'gray')
 
     
