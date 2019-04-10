@@ -1,0 +1,22 @@
+Tema:
+    Principios basicos de um carro autonomo
+
+
+Identificar:
+    bordas que simulam um pista
+    semaforo (verde, vermelho)
+    placas de sinalizacao (PARE, quebra-mola)
+    
+    pedestres
+    carro da frente
+
+
+
+Atuadores:
+    seguir bordas
+    fazer curva baseado na borda
+
+    parar no PARE
+    diminuir velocidade no quebra-mola
+
+    para ao ver pedestre
