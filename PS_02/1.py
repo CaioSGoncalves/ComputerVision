@@ -49,16 +49,17 @@ def plot_results(img, n):
 	plt.xlabel('r')
 	plt.ylabel('Mean of Values')
 	plt.hlines(original_mean, xmin=0, xmax=n)
-	# plt.xlim([0,255])
+	plt.ylim((0, 255))
 	plt.show()
 
 img_path = "images/noisy2.jpg"
 img = cv2.imread("images/noisy.png")
+img = cv2.GaussianBlur(img, (3, 3), 0)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-plot_results(img,5)
+plot_results(img,50)
 
-# new_img = equalize_image(img, r=100)
+# new_img = equalize_image(img, r=15)
 # cv2.imshow('Source image', img)
 # cv2.imshow('Equalized image', new_img)
 
