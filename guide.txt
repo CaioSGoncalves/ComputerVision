@@ -3,5 +3,5 @@
 # (não precisei): conda remove opencv
 # (não precisei): conda install -c menpo opencv
 pip install --upgrade pip
-pip install pip install opencv-python or pip install opencv-contrib-python
+pip install opencv-python or pip install opencv-contrib-python
 # https://pypi.org/project/opencv-contrib-python/
