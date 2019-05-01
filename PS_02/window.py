@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from cg_util import calculate_image_measures
+from frequency_image import Frequency_Image
 
 class Window:
 
@@ -39,38 +39,14 @@ class Window:
         self.values = self.image[y1:y2+1,x1:x2+1]
         self.center_pixel = self.image[self.y_center,self.x_center]
 
-    def draw_retangle(self, color, line_width=0):        
+    def draw_retangle(self, color, line_width=1):        
         cv2.rectangle(self.image,self.top_left,self.bottom_right,color,line_width)
-
-    def put_informations(self, color):
-        self.put_cordinates(color)
-        self.put_rgb_values(color)
-        self.put_mean_std(color)
-
-    def put_cordinates(self, color):
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        text = "Cordinates ({0}, {1})".format(self.x_center, self.y_center)
-        cordinate = (self.x_center-(120),self.y_center-(self.height+4))
-        cv2.putText(self.image,text,cordinate,font,0.5,color,1,cv2.LINE_AA)
-
-    def put_rgb_values(self, color):
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        text = "RGB: ({0}, {1}, {2})".format(self.center_pixel[2],self.center_pixel[1],self.center_pixel[0])
-        text += "  Intensity {0:.2f}".format(sum(self.center_pixel)/len(self.center_pixel))
-        cordinate = (self.x_center-(120),self.y_center+(self.height+16))
-        cv2.putText(self.image,text,cordinate,font,0.5,color,1,cv2.LINE_AA)
-
-    def put_mean_std(self, color):
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        w_mean,w_std,_ = calculate_image_measures(self.values)
-        text = "W-Mean: {0:.2f} W-Std: {1:.2f}".format(w_mean, w_std) + " W-Shape: {0}".format(self.values.shape)
-        cordinate = (self.x_center-(120),self.y_center+(self.height+32))
-        cv2.putText(self.image,text,cordinate,font,0.5,color,1,cv2.LINE_AA)
 
     def show_window(self, window_name="Window", size=(200,200)):
         cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
         cv2.resizeWindow(window_name, size[0], size[1])
         cv2.imshow(window_name, self.values)
+        cv2.resizeWindow(window_name,400,400)
 
     def it_fits(self):
         window_shape = self.values.shape[:2]
@@ -78,4 +54,39 @@ class Window:
         y_len_fits = window_shape[1] == self.height
         return x_len_fits and y_len_fits
 
+    def show_magnitude_window(self, window_name="Magnitude Window", size=(200,200)):
+        freq_img_1 = Frequency_Image(self.values)
+        magnitude_1, _ = freq_img_1.get_magnitude_phase()
+        magnitude_1 = cv2.convertScaleAbs(magnitude_1)
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, size[0], size[1])
+        cv2.imshow(window_name, magnitude_1)
+        cv2.resizeWindow(window_name,400,400)
+    
+    def show_phase_window(self, window_name="Phase Window", size=(200,200)):
+        freq_img_1 = Frequency_Image(self.values)
+        _, phase_1 = freq_img_1.get_magnitude_phase()
+        phase_1 = cv2.convertScaleAbs(phase_1)
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, size[0], size[1])
+        cv2.imshow(window_name, phase_1)
+        cv2.resizeWindow(window_name,400,400)
+
+    def get_edge_map(self, gray):
+        scale = 1
+        delta = 0
+        ddepth = cv2.CV_64F
+        grad_x = cv2.Sobel(gray, ddepth, 1, 0, ksize=3, scale=scale, delta=delta, borderType=cv2.BORDER_DEFAULT)
+        grad_y = cv2.Sobel(gray, ddepth, 0, 1, ksize=3, scale=scale, delta=delta, borderType=cv2.BORDER_DEFAULT)    
+        abs_grad_x = cv2.convertScaleAbs(grad_x)
+        abs_grad_y = cv2.convertScaleAbs(grad_y)
+        grad = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
+        return grad
+
+    def show_edge_map_window(self, window_name="Edge Map Window", size=(200,200)):
+        new_values = cv2.Canny(self.values,80,120)
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, size[0], size[1])
+        cv2.imshow(window_name, new_values)
+        cv2.resizeWindow(window_name,400,400)
         
