@@ -32,11 +32,8 @@ def detect_lines2(img, edges, min_n_points, minLineLength):
         cv2.line(new_img,(x1,y1),(x2,y2),(0,255,0),2)
     return new_img
 
-def detect_lines_images(img, edges, min_n_points, minLineLength):
-    return detect_lines1(img, edges, min_n_points), detect_lines2(img, edges, min_n_points, minLineLength)
-
 def get_equation():
-    m = uniform(0,2)
+    m = uniform(-2,2)
     c = uniform(-2,2)
     return m, c
 
@@ -44,57 +41,70 @@ def get_equation_value(m, x, c):
     y = m*x + c
     return int(y)
 
-def draw_lines(img, line_length, density):
+def draw_lines(img, line_length, density, noisy_img):
     m, c = get_equation()
-    n = randint(0, img.shape[0]-line_length)
+    n = randint(0, img.shape[1]-line_length)
 
     for i in range(n, n + line_length):
         y = get_equation_value(m, i, c)
-        if y < img.shape[1]:
-            # img[i,y] = 1
+        if abs(y) < abs(img.shape[0]):
+            img[y,i] = 1
             for _ in range(density):
                 near_y = y + randint(-5,5)
-                if near_y < img.shape[1]:
-                    img[i,near_y] = 1
+                if abs(near_y) < abs(img.shape[0]):
+                    noisy_img[near_y, i] = 1
 
-def generate_image(n_lines, line_length, density):
-    img = np.zeros((600,600,3), np.uint8)
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            rand = randint(0,20)
-            if rand is 5:
-                img[i,j] = 1    
+def generate_image(n_lines, line_length, density, noisy):
+    img = np.zeros((600,800,3), np.uint8)
+    noisy_img = img.copy()
+    for i in range(img.shape[1]):
+        for j in range(img.shape[0]):
+            rand = randint(0,noisy)
+            if rand is 0:
+                noisy_img[j,i] = 1    
             else:
-                img[i,j] = 255
+                noisy_img[j,i] = 255
+            img[j,i] = 255
     for i in range(n_lines):
-        draw_lines(img, line_length, density)
-    return img
+        draw_lines(img, line_length, density, noisy_img)
+    return img, noisy_img
 
 
-# img = cv2.imread('images/kitchen.jpg')
+d = 150
+line_length = 200
 
-img = generate_image(1, 300, 100)
+img, noisy_img = generate_image(n_lines=1, line_length=300, density=5, noisy=1)
 
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 edges = cv2.Canny(gray,50,150,apertureSize = 3)
+lines_img = detect_lines1(img, edges, d)
+# lines_img = detect_lines2(img, edges, d, line_length)
 
-# lines1, lines2 = detect_lines_images(img, edges, min_n_points=165, minLineLength=100)
-# lines1, lines2 = detect_lines_images(img, edges, min_n_points=300, minLineLength=300)
+gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+edges = cv2.Canny(gray,50,150,apertureSize = 3)
+lines_noisy_img = detect_lines1(noisy_img, edges, d)
+# lines_noisy_img = detect_lines2(noisy_img, edges, d, line_length)
 
-lines2 = detect_lines2(img, edges, 300, 100)
-# lines2 = detect_lines1(img, edges, 300)
+cv2.namedWindow('True Line Image',cv2.WINDOW_NORMAL)
+cv2.resizeWindow('True Line Image',800,800)
+cv2.imshow('True Line Image', img)
 
-cv2.namedWindow('Orignal Image',cv2.WINDOW_NORMAL)
-# cv2.namedWindow('Lines 1 Image',cv2.WINDOW_NORMAL)
-cv2.namedWindow('Lines 2 Image',cv2.WINDOW_NORMAL)
+cv2.namedWindow('Detection True Line Image',cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Detection True Line Image',800,800)
+cv2.imshow('Detection True Line Image', lines_img)
 
-cv2.resizeWindow('Orignal Image', 800,800)
-# cv2.resizeWindow('Lines 1 Image', 600,600)
-cv2.resizeWindow('Lines 2 Image', 800,800)
+cv2.namedWindow('Noisy Line Image',cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Noisy Line Image', 800,800)
+cv2.imshow('Noisy Line Image', noisy_img)
 
-cv2.imshow('Orignal Image', gray)
-# cv2.imshow('Lines 1 Image', lines1)
-cv2.imshow('Lines 2 Image', lines2)
+cv2.namedWindow('Detection Noisy Line Image',cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Detection Noisy Line Image', 800,800)
+cv2.imshow('Detection Noisy Line Image', lines_noisy_img)
+
+
+
+
+
 
 
 while(1):
