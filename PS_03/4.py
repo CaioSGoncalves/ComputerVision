@@ -41,18 +41,21 @@ def get_equation_value(m, x, c):
     y = m*x + c
     return int(y)
 
-def draw_lines(img, line_length, density, noisy_img):
+def draw_line(img, line_length, density, noisy_img):
     m, c = get_equation()
     n = randint(0, img.shape[1]-line_length)
 
     for i in range(n, n + line_length):
         y = get_equation_value(m, i, c)
-        if abs(y) < abs(img.shape[0]):
+        if y < img.shape[0] and y > 0:
             img[y,i] = 1
             for _ in range(density):
                 near_y = y + randint(-5,5)
-                if abs(near_y) < abs(img.shape[0]):
+                if abs(near_y) < img.shape[0]:
                     noisy_img[near_y, i] = 1
+        else:
+            return False
+    return True
 
 def generate_image(n_lines, line_length, density, noisy):
     img = np.zeros((600,800,3), np.uint8)
@@ -66,14 +69,21 @@ def generate_image(n_lines, line_length, density, noisy):
                 noisy_img[j,i] = 255
             img[j,i] = 255
     for i in range(n_lines):
-        draw_lines(img, line_length, density, noisy_img)
+        copy_img = img.copy()
+        copy_noisy_img = noisy_img.copy()
+        line_ok = draw_line(img, line_length, density, noisy_img)
+        while(line_ok is False):
+            img = copy_img.copy()
+            noisy_img = copy_noisy_img.copy()
+            line_ok = draw_line(img, line_length, density, noisy_img)
+            
     return img, noisy_img
 
 
 d = 150
 line_length = 200
 
-img, noisy_img = generate_image(n_lines=1, line_length=300, density=5, noisy=1)
+img, noisy_img = generate_image(n_lines=10, line_length=300, density=5, noisy=20)
 
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 edges = cv2.Canny(gray,50,150,apertureSize = 3)
@@ -85,17 +95,17 @@ edges = cv2.Canny(gray,50,150,apertureSize = 3)
 lines_noisy_img = detect_lines1(noisy_img, edges, d)
 # lines_noisy_img = detect_lines2(noisy_img, edges, d, line_length)
 
-cv2.namedWindow('True Line Image',cv2.WINDOW_NORMAL)
-cv2.resizeWindow('True Line Image',800,800)
-cv2.imshow('True Line Image', img)
+# cv2.namedWindow('True Line Image',cv2.WINDOW_NORMAL)
+# cv2.resizeWindow('True Line Image',800,800)
+# cv2.imshow('True Line Image', img)
 
 cv2.namedWindow('Detection True Line Image',cv2.WINDOW_NORMAL)
 cv2.resizeWindow('Detection True Line Image',800,800)
 cv2.imshow('Detection True Line Image', lines_img)
 
-cv2.namedWindow('Noisy Line Image',cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Noisy Line Image', 800,800)
-cv2.imshow('Noisy Line Image', noisy_img)
+# cv2.namedWindow('Noisy Line Image',cv2.WINDOW_NORMAL)
+# cv2.resizeWindow('Noisy Line Image', 800,800)
+# cv2.imshow('Noisy Line Image', noisy_img)
 
 cv2.namedWindow('Detection Noisy Line Image',cv2.WINDOW_NORMAL)
 cv2.resizeWindow('Detection Noisy Line Image', 800,800)
