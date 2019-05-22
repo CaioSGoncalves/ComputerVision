@@ -81,7 +81,7 @@ def generate_image(n_lines, line_length, density, noisy):
 
 
 d = 150
-line_length = 200
+# line_length = 200
 
 img, noisy_img = generate_image(n_lines=10, line_length=300, density=5, noisy=20)
 
