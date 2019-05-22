@@ -95,17 +95,17 @@ edges = cv2.Canny(gray,50,150,apertureSize = 3)
 lines_noisy_img = detect_lines1(noisy_img, edges, d)
 # lines_noisy_img = detect_lines2(noisy_img, edges, d, line_length)
 
-# cv2.namedWindow('True Line Image',cv2.WINDOW_NORMAL)
-# cv2.resizeWindow('True Line Image',800,800)
-# cv2.imshow('True Line Image', img)
+cv2.namedWindow('True Line Image',cv2.WINDOW_NORMAL)
+cv2.resizeWindow('True Line Image',800,800)
+cv2.imshow('True Line Image', img)
 
 cv2.namedWindow('Detection True Line Image',cv2.WINDOW_NORMAL)
 cv2.resizeWindow('Detection True Line Image',800,800)
 cv2.imshow('Detection True Line Image', lines_img)
 
-# cv2.namedWindow('Noisy Line Image',cv2.WINDOW_NORMAL)
-# cv2.resizeWindow('Noisy Line Image', 800,800)
-# cv2.imshow('Noisy Line Image', noisy_img)
+cv2.namedWindow('Noisy Line Image',cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Noisy Line Image', 800,800)
+cv2.imshow('Noisy Line Image', noisy_img)
 
 cv2.namedWindow('Detection Noisy Line Image',cv2.WINDOW_NORMAL)
 cv2.resizeWindow('Detection Noisy Line Image', 800,800)
