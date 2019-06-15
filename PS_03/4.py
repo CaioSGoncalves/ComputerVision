@@ -58,7 +58,7 @@ def draw_line(img, line_length, density, noisy_img):
     return True
 
 def generate_image(n_lines, line_length, density, noisy):
-    img = np.zeros((600,800,3), np.uint8)
+    img = np.zeros((400,400,3), np.uint8)
     noisy_img = img.copy()
     for i in range(img.shape[1]):
         for j in range(img.shape[0]):
